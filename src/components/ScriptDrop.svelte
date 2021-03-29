@@ -3,12 +3,15 @@
   import javascript from "highlight.js/lib/languages/javascript";
   import "highlight.js/styles/atom-one-dark.css";
   import { CodeJar } from "codejar";
-  import { onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
 
   hljs.registerLanguage("javascript", javascript);
-  let editor;
+
+  let editor: HTMLElement;
+  const dispatch = createEventDispatcher();
 
   export let snippet = "";
+  export let logs = [];
 
   onMount(() => {
     const jar = CodeJar(editor, (elem: HTMLElement) => {
@@ -17,24 +20,53 @@
         language: "javascript",
       }).value;
     });
+
+    editor.focus();
+
+    return jar.destroy;
   });
+
+  function interceptKeydown(event: KeyboardEvent) {
+    if (event.ctrlKey && event.key === "Enter") {
+      dispatch("execute", snippet);
+      event.preventDefault();
+    }
+  }
 </script>
 
-<div bind:this={editor} class="hljs editor">{snippet}</div>
+<div
+  bind:this={editor}
+  class="hljs editor monospace"
+  on:keydown={interceptKeydown}
+>
+  {snippet}
+</div>
+<div class="logger monospace">
+  {#each logs as log}
+    <div class="log">{log}</div>
+  {/each}
+</div>
 
 <style>
-  .hljs.editor {
+  .monospace {
     text-align: left;
-    border-radius: 6px;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12),
-      0 3px 1px -2px rgba(0, 0, 0, 0.2);
     font-family: "Source Code Pro", monospace;
     font-size: 14px;
     font-weight: 400;
-    height: 340px;
     letter-spacing: normal;
     line-height: 20px;
     padding: 10px;
     tab-size: 4;
+  }
+
+  .editor {
+    border-radius: 6px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12),
+      0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    height: 340px;
+  }
+
+  .logger > .log {
+    border-bottom: 1px solid #efefef;
   }
 </style>
