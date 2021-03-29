@@ -11,7 +11,6 @@
   const dispatch = createEventDispatcher();
 
   export let snippet = "";
-  export let logs = [];
 
   onMount(() => {
     const jar = CodeJar(editor, (elem: HTMLElement) => {
@@ -40,11 +39,6 @@
   on:keydown={interceptKeydown}
 >
   {snippet}
-</div>
-<div class="logger monospace">
-  {#each logs as log}
-    <div class="log">{log}</div>
-  {/each}
 </div>
 
 <style>

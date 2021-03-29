@@ -1,5 +1,29 @@
+import { Subject } from "rxjs";
+import { first } from "rxjs/operators";
+
 export default class Executor {
-  constructor(readonly context: Object) {}
+  breaker = new Subject();
+
+  constructor(readonly context: Object) {
+    context["debug"] = {
+      enabled: true,
+      sleep: (ms) =>
+        context["debug"].enabled && new Promise((ok) => setTimeout(ok, ms)),
+      break: () =>
+        context["debug"].enabled &&
+        new Promise((resolve, reject) =>
+          this.breaker.pipe(first()).subscribe(resolve, reject)
+        ),
+    };
+  }
+
+  resume() {
+    this.breaker.next();
+  }
+
+  destroy() {
+    this.breaker.complete();
+  }
 
   async execute(code: string) {
     let output;
