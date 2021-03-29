@@ -2,9 +2,17 @@
   export let logs = [];
 </script>
 
-<div class="logger monospace">
+<div class="logger monospace {$$props.class}">
   {#each logs as log}
-    <div class="log">{log}</div>
+    <div
+      class="log"
+      class:trace={log.level === "TRACE"}
+      class:info={log.level === "INFO"}
+      class:warn={log.level === "WARN"}
+      class:error={log.level === "ERROR"}
+    >
+      {log.message}
+    </div>
   {/each}
 </div>
 
@@ -18,5 +26,22 @@
     line-height: 20px;
     padding: 10px;
     tab-size: 4;
+  }
+
+  .logger > .log {
+    border-bottom: 1px solid #efefef;
+  }
+
+  .logger > .log.trace {
+    color: #a6a6a6;
+  }
+  .logger > .log.info {
+    color: #3a3a3a;
+  }
+  .logger > .log.warn {
+    color: #ffdfd3;
+  }
+  .logger > .log.error {
+    color: #d29abc;
   }
 </style>

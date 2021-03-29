@@ -1,7 +1,7 @@
 <script lang="ts">
   import RenderLogs from "./components/RenderLogs.svelte";
   import ScriptDrop from "./components/ScriptDrop.svelte";
-  import Executor from "./execute/executor";
+  import Executor from "./vm/executor";
 
   export let snippet = `\
 debug.enabled = false;
@@ -10,18 +10,18 @@ const watch = new Date();
 for (let i = 0; i < 10; i++) {
   await debug.sleep(i*10);
   console.log("packet", i);
-  await debug.break();
+  await debug.break(() => console.log("----- HERE -----"));
 }
 
 return \`executed for \${new Date() - watch} ms\`
 `;
   export let logs = [];
 
-  function logger(...args) {
-    const serialized = args
+  function logger(level: string, ...args) {
+    const message = args
       .map((arg) => (JSON.stringify(arg) || "").replace(/^"(.+)"$/g, "$1"))
       .join(" ");
-    logs = [...logs, serialized];
+    logs = [...logs, { level, message }];
   }
 
   let vm: Executor;
@@ -31,6 +31,7 @@ return \`executed for \${new Date() - watch} ms\`
       .split("")
       .reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
     logger(
+      "INFO",
       "📝 executing JS: ",
       new Date(),
       Object.values(new TextEncoder().encode("" + hash))
@@ -38,13 +39,18 @@ return \`executed for \${new Date() - watch} ms\`
 
     vm = new Executor({
       logger,
-      console: { log: logger },
+      console: {
+        trace: (...args) => logger("TRACE", ...args),
+        log: (...args) => logger("INFO", ...args),
+        warn: (...args) => logger("WARN", ...args),
+        error: (...args) => logger("ERROR", ...args),
+      },
     });
     try {
       const result = await vm.execute(code);
-      logger("📦 return value: ", result);
+      logger("INFO", "📦 return value: ", result);
     } catch (err) {
-      logger("💀 error 💀:", err.stack);
+      logger("ERROR", "💀 error 💀:", err.stack);
     } finally {
       vm.destroy();
       vm = null;
@@ -57,29 +63,55 @@ return \`executed for \${new Date() - watch} ms\`
 </script>
 
 <main>
-  <div style="margin-bottom: 10px">
+  <div class="controls">
     Press <code>Ctrl + Enter</code> to run your JS snippet or
     <button on:click={() => execute(snippet)} disabled={!!vm}>Execute</button>
     <button on:click={() => resume()} disabled={!vm}>Resume</button>
   </div>
-  <ScriptDrop
-    bind:snippet
-    on:execute={(c) => (!vm ? execute(c.detail) : resume())}
-  />
-  <RenderLogs {logs} />
+  <div class="sandbox">
+    <ScriptDrop
+      class="column"
+      bind:snippet
+      on:execute={(c) => (!vm ? execute(c.detail) : resume())}
+    />
+    <RenderLogs class="column" {logs} />
+  </div>
 </main>
 
 <style>
   main {
     text-align: center;
     padding: 1em;
-    max-width: 240px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 48px);
+  }
+
+  .controls {
+    background-color: #f3f3f3;
+    position: sticky;
+    top: 0;
+  }
+
+  .sandbox {
+    display: flex;
+    flex-grow: 1;
+  }
+
+  .sandbox > :global(.column) {
+    flex: 1;
   }
 
   @media (min-width: 640px) {
     main {
       max-width: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sandbox {
+      flex-direction: column;
     }
   }
 </style>

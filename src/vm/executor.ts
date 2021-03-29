@@ -9,8 +9,9 @@ export default class Executor {
       enabled: true,
       sleep: (ms) =>
         context["debug"].enabled && new Promise((ok) => setTimeout(ok, ms)),
-      break: () =>
+      break: (preamble) =>
         context["debug"].enabled &&
+        (preamble() || 1) &&
         new Promise((resolve, reject) =>
           this.breaker.pipe(first()).subscribe(resolve, reject)
         ),
