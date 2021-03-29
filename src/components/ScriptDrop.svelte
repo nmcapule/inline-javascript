@@ -8,8 +8,11 @@
   hljs.registerLanguage("javascript", javascript);
   let editor;
 
+  export let snippet = "";
+
   onMount(() => {
     const jar = CodeJar(editor, (elem: HTMLElement) => {
+      snippet = elem.textContent;
       elem.innerHTML = hljs.highlight(elem.textContent, {
         language: "javascript",
       }).value;
@@ -17,13 +20,7 @@
   });
 </script>
 
-<div bind:this={editor} class="hljs editor">
-  {`\
-function hello() {
-    console.log("world");
-}
-`}
-</div>
+<div bind:this={editor} class="hljs editor">{snippet}</div>
 
 <style>
   .hljs.editor {

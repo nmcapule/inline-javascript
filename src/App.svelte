@@ -2,6 +2,13 @@
   import ScriptDrop from "./components/ScriptDrop.svelte";
 
   export let name: string;
+
+  export let snippet = `\
+function hello() {
+    console.log("world");
+}`;
+
+  $: console.log(snippet);
 </script>
 
 <main>
@@ -10,7 +17,7 @@
     Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn
     how to build Svelte apps.
   </p>
-  <ScriptDrop />
+  <ScriptDrop bind:snippet />
 </main>
 
 <style>
