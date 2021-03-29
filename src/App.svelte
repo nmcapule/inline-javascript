@@ -3,11 +3,15 @@
   import Executor from "./execute/executor";
 
   export let snippet = `\
-function hello() {
-	console.log("packet")
+const sleep = async (ms) => new Promise((ok) => setTimeout(ok, ms));
+
+const watch = new Date();
+for (let i = 0; i < 10; i++) {
+  await sleep(i*10);
+  console.log("packet", i);
 }
 
-hello();
+return \`executed for \${new Date() - watch} ms\`
 `;
   export let logs = [];
 
@@ -24,11 +28,19 @@ hello();
       .split("")
       .reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
     logger(
-      "executing 📝: ",
+      "📝 executing JS: ",
       new Date(),
       Object.values(new TextEncoder().encode("" + hash))
     );
-    new Executor({ logger, console: { log: logger } }).execute(code);
+    try {
+      const result = await new Executor({
+        logger,
+        console: { log: logger },
+      }).execute(code);
+      logger("📦 return value: ", result);
+    } catch (err) {
+      logger("💀 error 💀:", err.stack);
+    }
   }
 </script>
 
