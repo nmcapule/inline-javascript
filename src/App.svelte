@@ -8,12 +8,12 @@
 
 const watch = new Date();
 for (let i = 0; i < 10; i++) {
-  await debug.wait(1000);
+  await debug.wait(100);
   console.log("------------");
   // await debug.wait(i * 200);
   // await debug.wait(() => console.log("----- HERE -----"));
   await debug.wait({
-    ms: i * 200,
+    ms: i * 20,
     preamble: () => console.log("before", i),
     callback: () => console.log("after", i),
   })
@@ -77,10 +77,10 @@ return \`executed for \${new Date() - watch} ms\`
 
 <main>
   <div class="controls">
-    Press <code>Ctrl + Enter</code> to run your JS snippet or
+    <code>Ctrl + Enter</code> to
     <button on:click={() => execute(snippet)} disabled={!!vm}>Execute</button>
     <button on:click={() => resume()} disabled={!vm}>Resume</button>
-    Press <code>Ctrl + x</code> to panic or
+    <code>Ctrl + x</code> to
     <button on:click={() => panic()} disabled={!vm}>Panic</button>
   </div>
   <div class="sandbox">
@@ -117,6 +117,7 @@ return \`executed for \${new Date() - watch} ms\`
   .sandbox > :global(.column) {
     flex: 1;
     overflow-x: auto;
+    max-height: calc(100vh - 96px);
   }
 
   @media (min-width: 640px) {

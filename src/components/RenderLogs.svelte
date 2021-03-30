@@ -1,8 +1,15 @@
 <script lang="ts">
+  let container: HTMLElement;
+
   export let logs = [];
+
+  $: (async (_) => {
+    await new Promise((ok, _) => setTimeout(ok, 0));
+    container?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+  })(logs);
 </script>
 
-<div class="logger monospace {$$props.class}">
+<div class="logger monospace {$$props.class}" bind:this={container}>
   {#each logs as log}
     <div
       class="log"
