@@ -8,12 +8,15 @@
   hljs.registerLanguage("javascript", javascript);
 
   let editor: HTMLElement;
+  let jar: CodeJar;
   const dispatch = createEventDispatcher();
 
   export let snippet = "";
 
+  $: if (editor?.textContent !== snippet) jar?.updateCode(snippet);
+
   onMount(() => {
-    const jar = CodeJar(editor, (elem: HTMLElement) => {
+    jar = CodeJar(editor, (elem: HTMLElement) => {
       elem.innerHTML = hljs.highlight(elem.textContent, {
         language: "javascript",
       }).value;

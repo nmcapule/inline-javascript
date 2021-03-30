@@ -7,31 +7,9 @@
   import Logger from "./vm/logger";
 
   export let snippet = `\
-// debug.enabled = false;
-
-const watch = new Date();
-
-const arr = Array.from({length:10})
-	.map(Math.random)
-	.map(x => parseInt(x*100));
-
-for (let i = 0; i < arr.length-1; i++) {
-	for (let j = i + 1; j < arr.length; j++) {
-		await debug.wait(100);
-
-		if (arr[i] > arr[j]) {
-			const tmp = arr[i];
-			arr[i] = arr[j];
-			arr[j] = tmp;
-
-			console.clear();
-			console.log(arr);
-		}
-	}
-}
-
-return \`executed for \${new Date() - watch} ms\`
-`;
+console.log("hi 👋");
+await debug.wait(3000);
+console.warn("bye 🙋‍♂️")`;
 
   let vm: Executor;
   let logger: Logger;
@@ -52,6 +30,14 @@ return \`executed for \${new Date() - watch} ms\`
       vm = null;
     }
   }
+
+  async function loadScript(url: string) {
+    try {
+      snippet = await fetch(url).then(async (res) => await res.text());
+    } catch (e) {
+      logger.error(e);
+    }
+  }
 </script>
 
 <main>
@@ -62,6 +48,19 @@ return \`executed for \${new Date() - watch} ms\`
 
     <button on:click={() => vm?.panic()} disabled={!vm}>
       <code>Ctrl + q</code> to Panic
+    </button>
+
+    <button on:click={() => loadScript(prompt("Input URL"))}>
+      Load script from URL
+    </button>
+    <button on:click={() => loadScript("samples/simple.js")}>
+      Load <code>simple.js</code>
+    </button>
+    <button on:click={() => loadScript("samples/sorter.js")}>
+      Load <code>sorter.js</code>
+    </button>
+    <button on:click={() => loadScript("samples/textadventure.js")}>
+      Load <code>textadventure.js</code>
     </button>
   </div>
   <div class="sandbox">
