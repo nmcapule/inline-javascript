@@ -1,75 +1,54 @@
 <script lang="ts">
+  import { writable } from "svelte/store";
+
   import RenderLogs from "./components/RenderLogs.svelte";
   import ScriptDrop from "./components/ScriptDrop.svelte";
   import Executor from "./vm/executor";
+  import Logger from "./vm/logger";
 
   export let snippet = `\
 // debug.enabled = false;
 
 const watch = new Date();
-for (let i = 0; i < 100; i++) {
-  await debug.wait(10);
-  console.log("------------");
-  // await debug.wait(i * 200);
-  // await debug.wait(() => console.log("----- HERE -----"));
-  await debug.wait({
-    ms: i,
-    preamble: () => console.log("before", i),
-    callback: () => console.log("after", i),
-  })
+
+const arr = Array.from({length:10})
+	.map(Math.random)
+	.map(x => parseInt(x*100));
+
+for (let i = 0; i < arr.length-1; i++) {
+	for (let j = i + 1; j < arr.length; j++) {
+		await debug.wait(100);
+
+		if (arr[i] > arr[j]) {
+			const tmp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = tmp;
+
+			console.clear();
+			console.log(arr);
+		}
+	}
 }
 
 return \`executed for \${new Date() - watch} ms\`
 `;
-  export let logs = [];
-
-  function logger(level: string, ...args) {
-    const message = args
-      .map((arg) => (JSON.stringify(arg) || "").replace(/^"(.+)"$/g, "$1"))
-      .join(" ");
-    logs = [...logs, { level, message }];
-  }
 
   let vm: Executor;
-  async function execute(code: string) {
-    logs = [];
-    const hash = code
-      .split("")
-      .reduce((a, b) => ((a << 5) - a + b.charCodeAt(0)) | 0, 0);
-    logger(
-      "INFO",
-      "📝 executing JS: ",
-      new Date(),
-      Object.values(new TextEncoder().encode("" + hash))
-    );
+  let logger: Logger;
+  let logs = writable([]);
 
-    vm = new Executor({
-      logger,
-      console: {
-        trace: (...args) => logger("TRACE", ...args),
-        log: (...args) => logger("INFO", ...args),
-        warn: (...args) => logger("WARN", ...args),
-        error: (...args) => logger("ERROR", ...args),
-      },
-    });
+  async function execute(code: string) {
+    logger = new Logger(logs.set);
+    logger.info("📝 executing JS: ", new Date());
+
+    vm = new Executor({ console: logger });
     try {
       const result = await vm.execute(code);
-      logger("INFO", "📦 return value: ", result);
+      logger.info("📦 return value: ", result);
     } catch (err) {
-      logger("ERROR", "💀 error 💀:", err.stack);
+      logger.error("💀 error 💀:", err.stack);
     } finally {
       vm?.destroy();
-      vm = null;
-    }
-  }
-
-  async function resume() {
-    if (vm) vm.resume();
-  }
-
-  async function panic() {
-    if (vm) {
-      vm.panic();
       vm = null;
     }
   }
@@ -77,20 +56,23 @@ return \`executed for \${new Date() - watch} ms\`
 
 <main>
   <div class="controls">
-    <code>Ctrl + Enter</code> to
-    <button on:click={() => execute(snippet)} disabled={!!vm}>Execute</button>
-    <button on:click={() => resume()} disabled={!vm}>Resume</button>
-    <code>Ctrl + x</code> to
-    <button on:click={() => panic()} disabled={!vm}>Panic</button>
+    <button on:click={() => (vm ? vm.resume() : execute(snippet))}>
+      <code>Ctrl + Enter</code> to Execute / Resume
+    </button>
+
+    <button on:click={() => vm?.panic()} disabled={!vm}>
+      <code>Ctrl + q</code> to Panic
+    </button>
   </div>
   <div class="sandbox">
     <ScriptDrop
       class="column"
       bind:snippet
-      on:execute={(c) => (!vm ? execute(snippet) : resume())}
-      on:panic={() => panic()}
+      on:execute={(c) => (vm ? vm.resume() : execute(snippet))}
+      on:panic={() => vm?.panic()}
     />
-    <RenderLogs class="column" {logs} />
+
+    <RenderLogs class="column" logs={$logs} />
   </div>
 </main>
 

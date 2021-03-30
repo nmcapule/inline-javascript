@@ -30,7 +30,7 @@
       dispatch("execute", snippet);
       event.preventDefault();
     }
-    if (event.ctrlKey && event.key === "x") {
+    if (event.ctrlKey && event.key === "q") {
       dispatch("panic");
       event.preventDefault();
     }
