@@ -4,13 +4,19 @@
   import Executor from "./vm/executor";
 
   export let snippet = `\
-debug.enabled = false;
+// debug.enabled = false;
 
 const watch = new Date();
 for (let i = 0; i < 10; i++) {
-  await debug.sleep(i*10);
-  console.log("packet", i);
-  await debug.break(() => console.log("----- HERE -----"));
+  await debug.wait(1000);
+  console.log("------------");
+  // await debug.wait(i * 200);
+  // await debug.wait(() => console.log("----- HERE -----"));
+  await debug.wait({
+    ms: i * 200,
+    preamble: () => console.log("before", i),
+    callback: () => console.log("after", i),
+  })
 }
 
 return \`executed for \${new Date() - watch} ms\`
@@ -52,13 +58,20 @@ return \`executed for \${new Date() - watch} ms\`
     } catch (err) {
       logger("ERROR", "💀 error 💀:", err.stack);
     } finally {
-      vm.destroy();
+      vm?.destroy();
       vm = null;
     }
   }
 
   async function resume() {
     if (vm) vm.resume();
+  }
+
+  async function panic() {
+    if (vm) {
+      vm.panic();
+      vm = null;
+    }
   }
 </script>
 
@@ -67,12 +80,15 @@ return \`executed for \${new Date() - watch} ms\`
     Press <code>Ctrl + Enter</code> to run your JS snippet or
     <button on:click={() => execute(snippet)} disabled={!!vm}>Execute</button>
     <button on:click={() => resume()} disabled={!vm}>Resume</button>
+    Press <code>Ctrl + x</code> to panic or
+    <button on:click={() => panic()} disabled={!vm}>Panic</button>
   </div>
   <div class="sandbox">
     <ScriptDrop
       class="column"
       bind:snippet
-      on:execute={(c) => (!vm ? execute(c.detail) : resume())}
+      on:execute={(c) => (!vm ? execute(snippet) : resume())}
+      on:panic={() => panic()}
     />
     <RenderLogs class="column" {logs} />
   </div>
@@ -86,12 +102,11 @@ return \`executed for \${new Date() - watch} ms\`
     display: flex;
     flex-direction: column;
     height: calc(100vh - 48px);
+    max-height: calc(100vh - 48px);
   }
 
   .controls {
     background-color: #f3f3f3;
-    position: sticky;
-    top: 0;
   }
 
   .sandbox {
@@ -101,6 +116,7 @@ return \`executed for \${new Date() - watch} ms\`
 
   .sandbox > :global(.column) {
     flex: 1;
+    overflow-x: auto;
   }
 
   @media (min-width: 640px) {

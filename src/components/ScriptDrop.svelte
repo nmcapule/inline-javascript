@@ -14,11 +14,11 @@
 
   onMount(() => {
     const jar = CodeJar(editor, (elem: HTMLElement) => {
-      snippet = elem.textContent;
       elem.innerHTML = hljs.highlight(elem.textContent, {
         language: "javascript",
       }).value;
     });
+    jar.onUpdate((code) => (snippet = code));
 
     editor.focus();
 
@@ -28,6 +28,10 @@
   function interceptKeydown(event: KeyboardEvent) {
     if (event.ctrlKey && event.key === "Enter") {
       dispatch("execute", snippet);
+      event.preventDefault();
+    }
+    if (event.ctrlKey && event.key === "x") {
+      dispatch("panic");
       event.preventDefault();
     }
   }

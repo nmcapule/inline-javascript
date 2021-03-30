@@ -11,7 +11,7 @@
       class:warn={log.level === "WARN"}
       class:error={log.level === "ERROR"}
     >
-      {log.message}
+      {log.message.replaceAll("\\n", "\n").replaceAll("\\", "")}
     </div>
   {/each}
 </div>
@@ -26,6 +26,7 @@
     line-height: 20px;
     padding: 10px;
     tab-size: 4;
+    white-space: pre-wrap;
   }
 
   .logger > .log {
