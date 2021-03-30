@@ -1,3 +1,5 @@
+<svelte:options tag="jsvm-repl" />
+
 <script lang="ts">
   import { writable } from "svelte/store";
 

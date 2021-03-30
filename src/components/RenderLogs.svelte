@@ -1,3 +1,5 @@
+<svelte:options tag="render-logs" />
+
 <script lang="ts">
   let container: HTMLElement;
 
