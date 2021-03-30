@@ -27,6 +27,10 @@ export default class Executor {
 
     this.context["debug"] = {
       wait: this.debugger.wait.bind(this.debugger),
+      alive: this.debugger.alive.bind(this.debugger),
+      disable: ((value = true) => {
+        this.debugger.enabled = !value;
+      }).bind(this.debugger),
     };
     Object.entries(this.context).forEach(
       ([key, value]) => (iframeWindow[key] = value)

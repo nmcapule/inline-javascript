@@ -34,13 +34,9 @@
     return jar.destroy;
   });
 
-  function interceptKeydown(event: KeyboardEvent) {
+  function handleKeydown(event: KeyboardEvent) {
+    // Make sure that the editor does not capture this key combination.
     if (event.ctrlKey && event.key === "Enter") {
-      dispatch("execute", snippet);
-      event.preventDefault();
-    }
-    if (event.ctrlKey && event.key === "q") {
-      dispatch("panic");
       event.preventDefault();
     }
   }
@@ -49,7 +45,7 @@
 <div
   bind:this={editor}
   class="hljs editor monospace {$$props.class}"
-  on:keydown={interceptKeydown}
+  on:keydown={handleKeydown}
 >
   {snippet}
 </div>

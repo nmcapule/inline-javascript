@@ -6,6 +6,22 @@ export default class Debugger {
   panicker = new Subject();
   enabled = true;
 
+  lastThrottle = new Date();
+
+  /**
+   * Just like `this.wait(0)` but only triggers every @ms milliseconds so that
+   * it will not become a bottleneck. Put in a tight loop to make sure that the
+   * UI still breathes.
+   */
+  async alive(ms = 250) {
+    const now = new Date();
+    if (now.getTime() - this.lastThrottle.getTime() < ms) {
+      return;
+    }
+    this.lastThrottle = now;
+    await this.wait(0);
+  }
+
   async wait(
     options?:
       | {

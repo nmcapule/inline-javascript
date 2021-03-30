@@ -38,7 +38,20 @@ console.warn("bye 🙋‍♂️")`;
       logger.error(e);
     }
   }
+
+  async function interceptKeydown(event: KeyboardEvent) {
+    if (event.ctrlKey && event.key === "Enter") {
+      vm ? vm.resume() : execute(snippet);
+      event.preventDefault();
+    }
+    if (event.ctrlKey && event.key === "q") {
+      vm ? vm.panic() : logger.warn("🤷‍♂️");
+      event.preventDefault();
+    }
+  }
 </script>
+
+<svelte:window on:keydown={interceptKeydown} />
 
 <main>
   <div class="controls">
@@ -64,13 +77,7 @@ console.warn("bye 🙋‍♂️")`;
     </button>
   </div>
   <div class="sandbox">
-    <ScriptDrop
-      class="column"
-      bind:snippet
-      on:execute={(c) => (vm ? vm.resume() : execute(snippet))}
-      on:panic={() => vm?.panic()}
-    />
-
+    <ScriptDrop class="column" bind:snippet />
     <RenderLogs class="column" logs={$logs} />
   </div>
 </main>
