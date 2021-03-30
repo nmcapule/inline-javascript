@@ -1,8 +1,10 @@
 // debug.enabled = false;
 
-const DEFAULT_ARRAY_LENGTH = 10;
-const DEFAULT_ARRAY_SORTER = "in";
+const DEFAULT_ARRAY_LENGTH = 33;
+const DEFAULT_ARRAY_SORTER = "sh";
 const DISABLE_PROMPT = true;
+const COMPLEXITY_WAIT_MS = 10;
+const SORTABLE_SYMBOL = "🍎";
 
 async function shellsort(arr) {
   const gaps = [701, 301, 132, 57, 23, 10, 4, 1];
@@ -13,13 +15,13 @@ async function shellsort(arr) {
       for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
         arr[j] = arr[j - gap];
 
-        await debug.wait(10);
+        await debug.wait(COMPLEXITY_WAIT_MS);
         console.clear();
         console.log(JSON.stringify(arr, null, 2));
       }
       arr[j] = temp;
 
-      await debug.wait(10);
+      await debug.wait(COMPLEXITY_WAIT_MS);
       console.clear();
       console.log(JSON.stringify(arr, null, 2));
     }
@@ -29,7 +31,7 @@ async function shellsort(arr) {
 async function bubblesort(arr) {
   for (let i = 0; i < arr.length - 1; i++) {
     for (let j = i + 1; j < arr.length; j++) {
-      await debug.wait(100);
+      await debug.wait(COMPLEXITY_WAIT_MS);
 
       if (arr[i] > arr[j]) {
         const tmp = arr[i];
@@ -44,10 +46,9 @@ async function bubblesort(arr) {
 }
 
 async function insertionsort(arr) {
-  console.log("asd");
   for (let i = 1; i < arr.length; i++) {
     for (let j = i - 1; j >= 0; j--) {
-      await debug.wait(100);
+      await debug.wait(COMPLEXITY_WAIT_MS);
 
       if (arr[j + 1] < arr[j]) {
         const tmp = arr[j + 1];
@@ -68,7 +69,7 @@ const length = parseInt(prompt("array length:", DEFAULT_ARRAY_LENGTH));
 const arr = Array.from({ length })
   .map(Math.random)
   .map((x) => parseInt(x * 30))
-  .map((x) => Array.from({ length: x }).fill("|").join(""));
+  .map((x) => Array.from({ length: x }).fill(SORTABLE_SYMBOL).join(""));
 
 const sorter = prompt(
   "`bubblesort` or `shellsort` or `insertionsort`?",
