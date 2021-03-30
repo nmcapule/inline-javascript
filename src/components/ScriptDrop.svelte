@@ -16,11 +16,17 @@
   $: if (editor?.textContent !== snippet) jar?.updateCode(snippet);
 
   onMount(() => {
-    jar = CodeJar(editor, (elem: HTMLElement) => {
-      elem.innerHTML = hljs.highlight(elem.textContent, {
-        language: "javascript",
-      }).value;
-    });
+    jar = CodeJar(
+      editor,
+      (elem: HTMLElement) => {
+        elem.innerHTML = hljs.highlight(elem.textContent, {
+          language: "javascript",
+        }).value;
+      },
+      {
+        tab: "  ",
+      }
+    );
     jar.onUpdate((code) => (snippet = code));
 
     editor.focus();
