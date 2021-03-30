@@ -1,7 +1,7 @@
 // debug.enabled = false;
 
-const DEFAULT_ARRAY_LENGTH = 30;
-const DEFAULT_ARRAY_SORTER = "shellsort";
+const DEFAULT_ARRAY_LENGTH = 10;
+const DEFAULT_ARRAY_SORTER = "in";
 const DISABLE_PROMPT = true;
 
 async function shellsort(arr) {
@@ -43,6 +43,24 @@ async function bubblesort(arr) {
   }
 }
 
+async function insertionsort(arr) {
+  console.log("asd");
+  for (let i = 1; i < arr.length; i++) {
+    for (let j = i - 1; j >= 0; j--) {
+      await debug.wait(100);
+
+      if (arr[j + 1] < arr[j]) {
+        const tmp = arr[j + 1];
+        arr[j + 1] = arr[j];
+        arr[j] = tmp;
+
+        console.clear();
+        console.log(JSON.stringify(arr, null, 2));
+      }
+    }
+  }
+}
+
 prompt = (msg, defaultValue) =>
   DISABLE_PROMPT ? defaultValue : window.prompt(msg, defaultValue);
 
@@ -52,7 +70,10 @@ const arr = Array.from({ length })
   .map((x) => parseInt(x * 30))
   .map((x) => Array.from({ length: x }).fill("|").join(""));
 
-const sorter = prompt("`bubblesort` or `shellsort`?", DEFAULT_ARRAY_SORTER);
+const sorter = prompt(
+  "`bubblesort` or `shellsort` or `insertionsort`?",
+  DEFAULT_ARRAY_SORTER
+);
 const watch = new Date();
 switch (sorter.slice(0, 2)) {
   case "bu":
@@ -60,6 +81,9 @@ switch (sorter.slice(0, 2)) {
     break;
   case "sh":
     await shellsort(arr);
+    break;
+  case "in":
+    await insertionsort(arr);
     break;
 }
 
