@@ -5,7 +5,7 @@
 
   $: (async (_) => {
     await new Promise((ok, _) => setTimeout(ok, 0));
-    container?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+    container?.lastElementChild?.scrollIntoView();
   })(logs);
 </script>
 
@@ -47,7 +47,7 @@
     color: #3a3a3a;
   }
   .logger > .log.warn {
-    color: #ffdfd3;
+    color: #f1c0a0;
   }
   .logger > .log.error {
     color: #d29abc;

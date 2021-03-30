@@ -7,13 +7,13 @@
 // debug.enabled = false;
 
 const watch = new Date();
-for (let i = 0; i < 10; i++) {
-  await debug.wait(100);
+for (let i = 0; i < 100; i++) {
+  await debug.wait(10);
   console.log("------------");
   // await debug.wait(i * 200);
   // await debug.wait(() => console.log("----- HERE -----"));
   await debug.wait({
-    ms: i * 20,
+    ms: i,
     preamble: () => console.log("before", i),
     callback: () => console.log("after", i),
   })
