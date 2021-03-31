@@ -15,15 +15,15 @@ async function shellsort(arr) {
       for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
         arr[j] = arr[j - gap];
 
-        await debug.wait(COMPLEXITY_WAIT_MS);
-        console.clear();
-        console.log(JSON.stringify(arr, null, 2));
+        await context("debug.wait", COMPLEXITY_WAIT_MS);
+        await context("console.clear");
+        await context("console.log", JSON.stringify(arr, null, 2));
       }
       arr[j] = temp;
 
-      await debug.wait(COMPLEXITY_WAIT_MS);
-      console.clear();
-      console.log(JSON.stringify(arr, null, 2));
+      await context("debug.wait", COMPLEXITY_WAIT_MS);
+      await context("console.clear");
+      await context("console.log", JSON.stringify(arr, null, 2));
     }
   }
 }
@@ -31,15 +31,15 @@ async function shellsort(arr) {
 async function bubblesort(arr) {
   for (let i = 0; i < arr.length - 1; i++) {
     for (let j = i + 1; j < arr.length; j++) {
-      await debug.wait(COMPLEXITY_WAIT_MS);
+      await context("debug.wait", COMPLEXITY_WAIT_MS);
 
       if (arr[i] > arr[j]) {
         const tmp = arr[i];
         arr[i] = arr[j];
         arr[j] = tmp;
 
-        console.clear();
-        console.log(JSON.stringify(arr, null, 2));
+        await context("console.clear");
+        await context("console.log", JSON.stringify(arr, null, 2));
       }
     }
   }
@@ -48,15 +48,15 @@ async function bubblesort(arr) {
 async function insertionsort(arr) {
   for (let i = 1; i < arr.length; i++) {
     for (let j = i - 1; j >= 0; j--) {
-      await debug.wait(COMPLEXITY_WAIT_MS);
+      await context("debug.wait", COMPLEXITY_WAIT_MS);
 
       if (arr[j + 1] < arr[j]) {
         const tmp = arr[j + 1];
         arr[j + 1] = arr[j];
         arr[j] = tmp;
 
-        console.clear();
-        console.log(JSON.stringify(arr, null, 2));
+        await context("console.clear");
+        await context("console.log", JSON.stringify(arr, null, 2));
       }
     }
   }
