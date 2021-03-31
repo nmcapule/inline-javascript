@@ -17,10 +17,8 @@ export default class Logger {
   info = (...args) => this.logWithLevel("INFO", ...args);
   warn = (...args) => this.logWithLevel("WARN", ...args);
   error = (...args) => this.logWithLevel("ERROR", ...args);
-
-  clear() {
+  clear = () => {
     this.logs = [];
-
     if (this.logCallback) this.logCallback(this.logs);
-  }
+  };
 }

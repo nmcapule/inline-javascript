@@ -12,6 +12,7 @@
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
+    "@surma/rollup-plugin-off-main-thread": "^2.1.0",
     "@tsconfig/svelte": "^1.0.0",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "codejar": "^3.3.0",
+    "comlink": "^4.3.0",
     "highlight.js": "^10.7.1",
     "rxjs": "^6.6.7",
     "sirv-cli": "^1.0.0"

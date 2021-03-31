@@ -7,9 +7,11 @@
   import Logger from "./vm/logger";
 
   export let snippet = `\
-console.log("hi 👋");
-await debug.wait(3000);
-console.warn("bye 🙋‍♂️")`;
+await context("console.log", "hi 👋");
+await context("debug.wait", 3000);
+await context("console.warn", "bye 🙋‍♂️");
+
+return {well:'i be damned'};`;
 
   let vm: Executor;
   let logger: Logger;
@@ -19,7 +21,7 @@ console.warn("bye 🙋‍♂️")`;
     logger = new Logger(logs.set);
     logger.info("📝 executing JS: ", new Date());
 
-    vm = new Executor({ console: logger });
+    vm = new Executor({ console: logger }, { mode: "host" });
     try {
       const result = await vm.execute(code);
       logger.info("📦 return value: ", result);
