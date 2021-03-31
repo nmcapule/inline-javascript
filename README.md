@@ -6,7 +6,7 @@ Execute sandboxed JS in a page.
 
 ## Roadmap
 
-- [ ] Create web worker executor
+- [x] Create web worker executor
 - [ ] Make it an embeddable Web Components. See branch
       `feature/as-web-components`.
 - [ ] Add more output rendering options. See
