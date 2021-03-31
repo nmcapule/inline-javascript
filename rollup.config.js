@@ -6,6 +6,7 @@ import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
 import css from "rollup-plugin-css-only";
+import OMT from "@surma/rollup-plugin-off-main-thread";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -38,9 +39,10 @@ export default {
   input: "src/main.ts",
   output: {
     sourcemap: true,
-    format: "iife",
+    // Required to be "esm" by rollup-plugin-off-main-thread
+    format: "esm",
     name: "app",
-    file: "public/build/bundle.js",
+    dir: "public/build",
   },
   plugins: [
     svelte({
@@ -64,9 +66,11 @@ export default {
       dedupe: ["svelte"],
     }),
     commonjs(),
+    OMT(),
     typescript({
       sourceMap: !production,
       inlineSources: !production,
+      module: "esnext",
     }),
 
     // In dev mode, call `npm run start` once
@@ -75,7 +79,14 @@ export default {
 
     // Watch the `public` directory and refresh the
     // browser on changes when not in production
-    !production && livereload("public"),
+    !production &&
+      (() => {
+        const plugin = livereload("public");
+        return {
+          ...plugin,
+          banner: () => plugin.banner().then((s) => `try{${s}}catch(e){}`),
+        };
+      })(),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify

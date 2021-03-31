@@ -8,8 +8,10 @@
 
   export let snippet = `\
 console.log("hi 👋");
-await debug.wait(3000);
-console.warn("bye 🙋‍♂️")`;
+// await debug.wait(3000);
+console.warn("bye 🙋‍♂️")
+
+return {well:'i be damned'};`;
 
   let vm: Executor;
   let logger: Logger;
@@ -19,7 +21,7 @@ console.warn("bye 🙋‍♂️")`;
     logger = new Logger(logs.set);
     logger.info("📝 executing JS: ", new Date());
 
-    vm = new Executor({ console: logger });
+    vm = new Executor({ console: logger }, { mode: "worker" });
     try {
       const result = await vm.execute(code);
       logger.info("📦 return value: ", result);
