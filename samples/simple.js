@@ -8,15 +8,15 @@ const arr = Array.from({ length: 10 })
 
 for (let i = 0; i < arr.length - 1; i++) {
   for (let j = i + 1; j < arr.length; j++) {
-    await debug.wait(100);
+    await context("debug.wait", 100);
 
     if (arr[i] > arr[j]) {
       const tmp = arr[i];
       arr[i] = arr[j];
       arr[j] = tmp;
 
-      console.clear();
-      console.log(arr);
+      await context("console.clear");
+      await context("console.log", arr);
     }
   }
 }
