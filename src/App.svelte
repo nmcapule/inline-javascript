@@ -21,7 +21,7 @@ return {well:'i be damned'};`;
     logger = new Logger(logs.set);
     logger.info("📝 executing JS: ", new Date());
 
-    vm = new Executor({ console: logger }, { mode: "host" });
+    vm = new Executor({ console: logger }, { mode: "worker" });
     try {
       const result = await vm.execute(code);
       logger.info("📦 return value: ", result);
