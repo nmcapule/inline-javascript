@@ -14,3 +14,9 @@ Execute sandboxed JS in a page.
       for inspiration.
 - [ ] Custom inputs instead of just `window.prompt` or `window.confirm`.
 - [ ] Improve UI.
+
+## Alternatives
+
+- https://replit.com/
+- https://observablehq.com/
+- https://runkit.com/home
