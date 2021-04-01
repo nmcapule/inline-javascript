@@ -9,7 +9,6 @@
 
   let editor: HTMLElement;
   let jar: CodeJar;
-  const dispatch = createEventDispatcher();
 
   export let snippet = "";
 

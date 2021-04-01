@@ -1,10 +1,16 @@
 <script lang="ts">
+  import lzs from "lz-string";
+  import { onMount } from "svelte";
+
   import { writable } from "svelte/store";
 
   import RenderLogs from "./components/RenderLogs.svelte";
   import ScriptDrop from "./components/ScriptDrop.svelte";
   import Executor from "./vm/executor";
   import Logger from "./vm/logger";
+
+  const compress = lzs.compressToEncodedURIComponent;
+  const decompress = lzs.decompressFromEncodedURIComponent;
 
   export let snippet = `\
 await context("console.log", "hi 👋");
@@ -17,7 +23,13 @@ return {well:'i be damned'};`;
   let logger: Logger;
   let logs = writable([]);
 
+  onMount(() => {
+    parseQueryParamsToSnippet();
+  });
+
   async function execute(code: string) {
+    reflectSnippetToQueryParams();
+
     logger = new Logger(logs.set);
     logger.info("📝 executing JS: ", new Date());
 
@@ -33,14 +45,6 @@ return {well:'i be damned'};`;
     }
   }
 
-  async function loadScript(url: string) {
-    try {
-      snippet = await fetch(url).then(async (res) => await res.text());
-    } catch (e) {
-      logger.error(e);
-    }
-  }
-
   async function interceptKeydown(event: KeyboardEvent) {
     if (event.ctrlKey && event.key === "Enter") {
       vm ? vm.resume() : execute(snippet);
@@ -49,6 +53,40 @@ return {well:'i be damned'};`;
     if (event.ctrlKey && event.key === "q") {
       vm ? vm.panic() : logger.warn("🤷‍♂️");
       event.preventDefault();
+    }
+  }
+
+  async function loadSnippetFromScriptURL(url: string) {
+    try {
+      reflectScriptURLToQueryParams(url);
+      snippet = await fetch(url).then(async (res) => await res.text());
+    } catch (e) {
+      logger.error(e);
+    }
+  }
+
+  async function parseQueryParamsToSnippet() {
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("snippet")) {
+      snippet = decompress(query.get("snippet"));
+    } else if (query.get("url")) {
+      snippet = await fetch(query.get("url")).then(
+        async (res) => await res.text()
+      );
+    }
+  }
+  function reflectSnippetToQueryParams() {
+    if (history.pushState) {
+      const encoded = compress(snippet);
+      const url = `${window.location.origin}${window.location.pathname}?snippet=${encoded}`;
+      window.history.pushState({ path: url }, "", url);
+    }
+  }
+  function reflectScriptURLToQueryParams(scriptUrl) {
+    if (history.pushState) {
+      const encoded = encodeURIComponent(scriptUrl);
+      const url = `${window.location.origin}${window.location.pathname}?url=${encoded}`;
+      window.history.pushState({ path: url }, "", url);
     }
   }
 </script>
@@ -65,16 +103,18 @@ return {well:'i be damned'};`;
       <code>Ctrl + q</code> to Panic
     </button>
 
-    <button on:click={() => loadScript(prompt("Input URL"))}>
+    <button on:click={() => loadSnippetFromScriptURL(prompt("Input URL"))}>
       Load script from URL
     </button>
-    <button on:click={() => loadScript("samples/simple.js")}>
+    <button on:click={() => loadSnippetFromScriptURL("samples/simple.js")}>
       Load <code>simple.js</code>
     </button>
-    <button on:click={() => loadScript("samples/sorter.js")}>
+    <button on:click={() => loadSnippetFromScriptURL("samples/sorter.js")}>
       Load <code>sorter.js</code>
     </button>
-    <button on:click={() => loadScript("samples/textadventure.js")}>
+    <button
+      on:click={() => loadSnippetFromScriptURL("samples/textadventure.js")}
+    >
       Load <code>textadventure.js</code>
     </button>
   </div>

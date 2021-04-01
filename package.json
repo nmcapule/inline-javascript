@@ -29,6 +29,7 @@
     "codejar": "^3.3.0",
     "comlink": "^4.3.0",
     "highlight.js": "^10.7.1",
+    "lz-string": "^1.4.4",
     "rxjs": "^6.6.7",
     "sirv-cli": "^1.0.0"
   }
