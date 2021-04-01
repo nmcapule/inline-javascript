@@ -1,0 +1,34 @@
+inline-render-logs {
+  display: flex;
+  overflow: auto;
+
+  .monospace {
+    text-align: left;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: 20px;
+    padding: 10px;
+    tab-size: 4;
+    white-space: pre-wrap;
+  }
+
+  .logger {
+    > .log {
+      border-bottom: 1px solid #efefef;
+    }
+    > .log.trace {
+      color: #a6a6a6;
+    }
+    > .log.info {
+      color: #3a3a3a;
+    }
+    > .log.warn {
+      color: #f1c0a0;
+    }
+    > .log.error {
+      color: #d29abc;
+    }
+  }
+}
