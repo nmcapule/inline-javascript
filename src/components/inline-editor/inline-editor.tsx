@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, Event, EventEmitter, Watch, Listen } from '@stencil/core';
+import { Component, Host, h, Prop, Event, EventEmitter, Watch } from '@stencil/core';
 import { CodeJar } from 'codejar';
 
 import javascript from 'highlight.js/lib/languages/javascript';
