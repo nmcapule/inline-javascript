@@ -14,6 +14,7 @@ Execute sandboxed JS in a page.
       for inspiration.
 - [ ] Custom inputs instead of just `window.prompt` or `window.confirm`.
 - [ ] Improve UI.
+- [ ] Compatibility with dwitter!
 - [x] Allow sharing code via URL only and no server-side.
 
 ## Alternatives
