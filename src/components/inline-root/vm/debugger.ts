@@ -1,5 +1,5 @@
-import { Observable, race, Subject, timer } from "rxjs";
-import { first, tap } from "rxjs/operators";
+import { Observable, race, Subject, timer } from 'rxjs';
+import { first, tap } from 'rxjs/operators';
 
 export default class Debugger {
   breaker = new Subject();
@@ -30,39 +30,35 @@ export default class Debugger {
           callback?: Function;
         }
       | number
-      | Function
+      | Function,
   ) {
     if (!this.enabled) {
       return;
-    } else if (typeof options === "number") {
+    } else if (typeof options === 'number') {
       options = { ms: options };
-    } else if (typeof options === "function") {
+    } else if (typeof options === 'function') {
       options = { preamble: options };
-    } else if (typeof options === "undefined") {
+    } else if (typeof options === 'undefined') {
       options = {};
     }
 
-    if (typeof options.preamble === "function") options.preamble();
+    if (typeof options.preamble === 'function') options.preamble();
 
     const observables: Observable<any>[] = [
       this.breaker,
       this.panicker.pipe(
         tap(() => {
-          throw new Error("VM panicked!");
-        })
+          throw new Error('VM panicked!');
+        }),
       ),
     ];
-    if (
-      !Number.isNaN(options.ms) &&
-      typeof options.ms !== "undefined" &&
-      options.ms !== null
-    ) {
+    if (!Number.isNaN(options.ms) && typeof options.ms !== 'undefined' && options.ms !== null) {
       observables.push(timer(options.ms));
     }
 
     await race(observables).pipe(first()).toPromise();
 
-    if (typeof options.callback === "function") options.callback();
+    if (typeof options.callback === 'function') options.callback();
   }
 
   resume() {

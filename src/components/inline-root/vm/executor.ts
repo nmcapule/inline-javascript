@@ -1,4 +1,5 @@
 import Debugger from './debugger';
+import { execute } from './executor.worker';
 
 function proxyContext(context: any) {
   return async (command: string[] | string, ...args) => {
@@ -33,6 +34,10 @@ export default class Executor {
   panic = this.debugger.panic.bind(this.debugger);
   destroy = this.debugger.destroy.bind(this.debugger);
 
+  async executeAsWorker(code: string) {
+    return await execute(code, proxyContext(this.context));
+  }
+
   async executeAsWindow(code: string) {
     let output;
     const iframe = document.createElement('iframe');
@@ -53,11 +58,11 @@ export default class Executor {
 
   async execute(code: string) {
     switch (this.options?.mode) {
-      // case 'worker':
-      //   return this.executeAsWorker(code);
+      case 'worker':
+        return await this.executeAsWorker(code);
       case 'host':
       default:
-        return this.executeAsWindow(code);
+        return await this.executeAsWindow(code);
     }
   }
 }

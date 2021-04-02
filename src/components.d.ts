@@ -5,15 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { MatchResults } from "@stencil/router";
 export namespace Components {
-    interface AppHome {
-    }
-    interface AppProfile {
-        "match": MatchResults;
-    }
-    interface AppRoot {
-    }
     interface InlineEditor {
         "code": string;
     }
@@ -24,24 +16,6 @@ export namespace Components {
     }
 }
 declare global {
-    interface HTMLAppHomeElement extends Components.AppHome, HTMLStencilElement {
-    }
-    var HTMLAppHomeElement: {
-        prototype: HTMLAppHomeElement;
-        new (): HTMLAppHomeElement;
-    };
-    interface HTMLAppProfileElement extends Components.AppProfile, HTMLStencilElement {
-    }
-    var HTMLAppProfileElement: {
-        prototype: HTMLAppProfileElement;
-        new (): HTMLAppProfileElement;
-    };
-    interface HTMLAppRootElement extends Components.AppRoot, HTMLStencilElement {
-    }
-    var HTMLAppRootElement: {
-        prototype: HTMLAppRootElement;
-        new (): HTMLAppRootElement;
-    };
     interface HTMLInlineEditorElement extends Components.InlineEditor, HTMLStencilElement {
     }
     var HTMLInlineEditorElement: {
@@ -61,22 +35,12 @@ declare global {
         new (): HTMLInlineRootElement;
     };
     interface HTMLElementTagNameMap {
-        "app-home": HTMLAppHomeElement;
-        "app-profile": HTMLAppProfileElement;
-        "app-root": HTMLAppRootElement;
         "inline-editor": HTMLInlineEditorElement;
         "inline-render-logs": HTMLInlineRenderLogsElement;
         "inline-root": HTMLInlineRootElement;
     }
 }
 declare namespace LocalJSX {
-    interface AppHome {
-    }
-    interface AppProfile {
-        "match"?: MatchResults;
-    }
-    interface AppRoot {
-    }
     interface InlineEditor {
         "code"?: string;
         "onCodeChanged"?: (event: CustomEvent<string>) => void;
@@ -87,9 +51,6 @@ declare namespace LocalJSX {
     interface InlineRoot {
     }
     interface IntrinsicElements {
-        "app-home": AppHome;
-        "app-profile": AppProfile;
-        "app-root": AppRoot;
         "inline-editor": InlineEditor;
         "inline-render-logs": InlineRenderLogs;
         "inline-root": InlineRoot;
@@ -99,9 +60,6 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "app-home": LocalJSX.AppHome & JSXBase.HTMLAttributes<HTMLAppHomeElement>;
-            "app-profile": LocalJSX.AppProfile & JSXBase.HTMLAttributes<HTMLAppProfileElement>;
-            "app-root": LocalJSX.AppRoot & JSXBase.HTMLAttributes<HTMLAppRootElement>;
             "inline-editor": LocalJSX.InlineEditor & JSXBase.HTMLAttributes<HTMLInlineEditorElement>;
             "inline-render-logs": LocalJSX.InlineRenderLogs & JSXBase.HTMLAttributes<HTMLInlineRenderLogsElement>;
             "inline-root": LocalJSX.InlineRoot & JSXBase.HTMLAttributes<HTMLInlineRootElement>;
