@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, Event, EventEmitter } from '@stencil/core';
+import { Component, Host, h, Prop, Event, EventEmitter, Watch, Listen } from '@stencil/core';
 import { CodeJar } from 'codejar';
 
 import javascript from 'highlight.js/lib/languages/javascript';
@@ -21,6 +21,11 @@ export class InlineEditor {
 
   editor: HTMLElement;
   jar: CodeJar;
+
+  @Watch('code')
+  handleCodePropChange() {
+    if (this.editor?.textContent !== this.code) this.jar?.updateCode(this.code);
+  }
 
   componentDidLoad() {
     this.jar = CodeJar(
