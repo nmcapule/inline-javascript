@@ -1,0 +1,41 @@
+/** Apparently, you need :host for root elems even if shadow=false. */
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: stretch;
+  height: 100vh;
+  width: 100vw;
+}
+
+.block {
+  flex: 50%;
+}
+
+.overlay {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  margin: 8px;
+
+  .fav {
+    margin: 4px;
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+    border: 1px solid #fff;
+    outline: 0;
+    color: #fff;
+    background-color: #282c34;
+    border-radius: 100%;
+
+    &:hover {
+      color: #eee;
+      background-color: #333;
+      cursor: pointer;
+    }
+  }
+}
