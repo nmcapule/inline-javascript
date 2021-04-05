@@ -14,12 +14,15 @@
 
 .overlay {
   position: fixed;
+  display: flex;
+  flex-direction: column;
   right: 0;
   bottom: 0;
   z-index: 10;
+  margin: 8px;
 
   .fav {
-    margin: 24px;
+    margin: 4px;
     width: 64px;
     height: 64px;
     font-size: 24px;

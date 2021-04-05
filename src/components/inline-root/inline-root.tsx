@@ -32,6 +32,7 @@ for (let i = 0; i < 1000; i++) {
 
 // 💡 \`await\` is usable in this block. 
 await Promise.all(promises);`;
+
   @State() logs: any[] = [];
 
   private codeChanged = new Subject<string>();
@@ -57,6 +58,23 @@ await Promise.all(promises);`;
         window.history.pushState({ path: url }, '', url);
       }
     });
+
+    if (window.innerWidth <= 840) {
+      this.focus = 'inline-editor';
+    }
+  }
+
+  @State() focus = '';
+  toggleFocus(elem?: string) {
+    if (!this.focus) return;
+
+    if (elem) {
+      this.focus = elem;
+    } else if (this.focus === 'inline-editor') {
+      this.focus = 'inline-render-logs';
+    } else if (this.focus === 'inline-render-logs') {
+      this.focus = 'inline-editor';
+    }
   }
 
   @Listen('codeChanged')
@@ -72,7 +90,7 @@ await Promise.all(promises);`;
       return event.preventDefault();
     }
     if (event.ctrlKey && event.key === 'q') {
-      this.panic();
+      // this.panic();
       return event.preventDefault();
     }
   }
@@ -93,18 +111,27 @@ await Promise.all(promises);`;
     }
   }
 
-  private async panic() {
-    this.vm?.destroy();
-  }
-
   render() {
     return (
       <Host>
         <div class="overlay">
-          <button class="fav">▶</button>
+          <button
+            class="fav"
+            onClick={() => {
+              this.toggleFocus('inline-render-logs');
+              this.execute(this.code);
+            }}
+          >
+            ▶
+          </button>
+          {this.focus && (
+            <button class="fav" onClick={() => this.toggleFocus()}>
+              👩‍💻
+            </button>
+          )}
         </div>
-        <inline-editor class="block" code={this.code} ref={editor => (this.editor = editor)} />
-        <inline-render-logs class="block" logs={this.logs} />
+        {(!this.focus || this.focus === 'inline-editor') && <inline-editor class="block" code={this.code} ref={editor => (this.editor = editor)} />}
+        {(!this.focus || this.focus === 'inline-render-logs') && <inline-render-logs class="block" logs={this.logs} />}
       </Host>
     );
   }
