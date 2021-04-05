@@ -2,7 +2,7 @@
   "name": "inline",
   "private": true,
   "version": "0.0.1",
-  "description": "Stencil App Starter",
+  "description": "Inline JavaScript Playground",
   "scripts": {
     "build": "stencil build",
     "start": "stencil build --dev --watch --serve",
@@ -12,7 +12,6 @@
   },
   "devDependencies": {
     "@stencil/core": "^2.0.0",
-    "@stencil/router": "^1.0.1",
     "@stencil/sass": "^1.4.1",
     "workbox-build": "^4.3.1"
   },

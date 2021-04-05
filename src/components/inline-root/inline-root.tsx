@@ -100,6 +100,9 @@ await Promise.all(promises);`;
   render() {
     return (
       <Host>
+        <div class="overlay">
+          <button class="fav">▶</button>
+        </div>
         <inline-editor class="block" code={this.code} ref={editor => (this.editor = editor)} />
         <inline-render-logs class="block" logs={this.logs} />
       </Host>

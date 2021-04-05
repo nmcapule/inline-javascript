@@ -11,3 +11,28 @@
 .block {
   flex: 50%;
 }
+
+.overlay {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+
+  .fav {
+    margin: 24px;
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+    border: 1px solid #fff;
+    outline: 0;
+    color: #fff;
+    background-color: #282c34;
+    border-radius: 100%;
+
+    &:hover {
+      color: #eee;
+      background-color: #333;
+      cursor: pointer;
+    }
+  }
+}
