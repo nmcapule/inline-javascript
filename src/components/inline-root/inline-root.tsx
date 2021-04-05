@@ -96,6 +96,8 @@ await Promise.all(promises);`;
   }
 
   private async execute(code: string) {
+    this.toggleFocus('inline-render-logs');
+
     this.logger = new Logger(v => (this.logs = v));
     this.logger.info('📝 executing JS: ', new Date());
 
@@ -115,13 +117,7 @@ await Promise.all(promises);`;
     return (
       <Host>
         <div class="overlay">
-          <button
-            class="fav"
-            onClick={() => {
-              this.toggleFocus('inline-render-logs');
-              this.execute(this.code);
-            }}
-          >
+          <button class="fav" onClick={() => this.execute(this.code)}>
             ▶
           </button>
           {this.focus && (
