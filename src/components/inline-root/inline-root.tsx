@@ -14,11 +14,24 @@ import { debounceTime } from 'rxjs/operators';
   scoped: true,
 })
 export class InlineRoot {
-  @State() code: string = `await $(console.log("asd"));
-  await $(console.clear());
-  
-  function derpie(q) { a(); b(); c(); }
-  await $(console.log(derpie.toString()))`;
+  @State() code: string = `\
+// 💡 Press Ctrl+Enter to execute script.
+
+// 💡 Use \`defui\` to define a function that will be run on the main thread.
+const log = defui(async (str, delay=0) => {
+  await new Promise(ok => setTimeout(ok, delay));
+  // 💡 \`this\` refers to context from UI.
+  this.console.log(str);
+  return str;
+});
+
+const promises = [];
+for (let i = 0; i < 1000; i++) {
+  promises.push(log(\`hey: \${i}\`, Math.random()*1000));
+}
+
+// 💡 \`await\` is usable in this block. 
+await Promise.all(promises);`;
   @State() logs: any[] = [];
 
   private codeChanged = new Subject<string>();
@@ -68,7 +81,7 @@ export class InlineRoot {
     this.logger = new Logger(v => (this.logs = v));
     this.logger.info('📝 executing JS: ', new Date());
 
-    this.vm = new Executor({ console: this.logger }, { mode: 'worker' });
+    this.vm = new Executor({ console: this.logger });
     try {
       const result = await this.vm.execute(code);
       this.logger.info('📦 return value: ', result);

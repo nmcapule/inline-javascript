@@ -1,42 +1,42 @@
-function proxify(parent) {
-  let proxy: ProxyConstructor;
-  const handler = {
-    get: (target, prop, _receiver) => {
-      target.path = [...(target.path || []), prop];
-      if (prop === 'do') {
-        const sliced = target.path.slice(0, target.path.length - 1);
-        target.path = [];
-        return () => target(sliced);
-      }
-      return proxy;
-    },
-    apply: (target, thisArg, args) => {
-      // If this is undefined, we're calling the func directly.
-      if (!thisArg) {
-        let result;
-        for (const arg of args) {
-          if (typeof arg === 'function') {
-            result = arg['do']();
-          } else {
-            result = target(arg);
-          }
-        }
-        return result;
-      }
-      target.path = [...(target.path || []), [...args]];
-      return proxy;
-    },
-  };
-  return (proxy = new Proxy(parent, handler));
+import { Subject } from 'rxjs';
+import { filter, first, map, takeUntil } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
+
+const STATE_PROP = 'state';
+const DEFINE_ON_MAIN = 'defui';
+
+self[STATE_PROP] = new Subject<[string, any]>();
+let unsubscribe = new Subject();
+
+export async function initWorker() {
+  self[STATE_PROP] = new Subject<[string, any]>();
+  unsubscribe = new Subject();
 }
 
-export async function execute(code: string, context: (...args) => any) {
-  self['$'] = proxify(context);
-  self['call'] = self['$'];
-  self['console'] = proxify(args => context(['console', ...args]));
+export async function execute(code: string, runOnMain: (...args) => any) {
+  self[DEFINE_ON_MAIN] = fn => async (...args) => {
+    const callId = uuidv4();
+    runOnMain(callId, fn.toString(), args);
+    return await self[STATE_PROP].pipe(
+      filter(([key, _value]) => key === callId),
+      map(([_key, value]) => value),
+      first(),
+      takeUntil(unsubscribe),
+    ).toPromise();
+  };
 
   const fn = self.Function(`return (async () => {
     ${code};
   })();`);
+
   return await fn();
+}
+
+export async function setWorkerState(key, value) {
+  self[STATE_PROP].next([key, value]);
+}
+
+export async function cleanupWorker() {
+  unsubscribe.next();
+  unsubscribe.complete();
 }
