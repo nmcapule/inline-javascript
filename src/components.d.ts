@@ -8,6 +8,10 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface InlineEditor {
         "code": string;
+        /**
+          * This is a hack. I can't get the cursor to behave so I just exposed this.
+         */
+        "forceCodeChange": (code: string) => Promise<void>;
     }
     interface InlineRenderLogs {
         "logs": { level: string; message: string }[];

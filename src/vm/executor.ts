@@ -17,6 +17,23 @@ function proxyContext(context: any) {
   };
 }
 
+function proxy(context: any) {
+  return async (commands: string[]) => {
+    const value = commands.reduce((parent, prop: string | Array<any>) => {
+      if (typeof prop === 'string') {
+        return parent[prop];
+      }
+      if (Array.isArray(prop)) {
+        return parent(...prop);
+      }
+    }, context);
+    // Non-error throwing approximation of the structured clone algorithm.
+    // https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
+    const s = JSON.stringify(value);
+    if (typeof s !== 'undefined') return JSON.parse(s);
+  };
+}
+
 export default class Executor {
   debugger = new Debugger();
 
@@ -35,7 +52,7 @@ export default class Executor {
   destroy = this.debugger.destroy.bind(this.debugger);
 
   async executeAsWorker(code: string) {
-    return await execute(code, proxyContext(this.context));
+    return await execute(code, proxy(this.context));
   }
 
   async executeAsWindow(code: string) {

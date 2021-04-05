@@ -14,19 +14,18 @@ export class InlineRenderLogs {
       <Host>
         <div class="logger monospace">
           {this.logs.map(log => (
-            <div class="log">{log.message.replaceAll('\\n', '\n').replaceAll('\\', '')}</div>
+            <div
+              class={{
+                log: true,
+                trace: log.level === 'TRACE',
+                info: log.level === 'INFO',
+                warn: log.level === 'WARN',
+                error: log.level === 'ERROR',
+              }}
+            >
+              {log.message.replaceAll('\\n', '\n').replaceAll('\\', '')}
+            </div>
           ))}
-          {/* {#each logs as log}
-          <div
-            class="log"
-            class:trace={log.level === "TRACE"}
-            class:info={log.level === "INFO"}
-            class:warn={log.level === "WARN"}
-            class:error={log.level === "ERROR"}
-          >
-            {log.message.replaceAll("\\n", "\n").replaceAll("\\", "")}
-          </div>
-        {/each} */}
         </div>
       </Host>
     );

@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, Event, EventEmitter, Watch } from '@stencil/core';
+import { Component, Host, h, Prop, Event, EventEmitter, Method } from '@stencil/core';
 import { CodeJar } from 'codejar';
 
 import javascript from 'highlight.js/lib/languages/javascript';
@@ -16,25 +16,32 @@ hljs.registerLanguage('javascript', javascript);
   // scoped: true,
 })
 export class InlineEditor {
-  @Prop() code: string = '';
+  @Prop({ mutable: true }) code: string = '';
   @Event() codeChanged: EventEmitter<string>;
 
   editor: HTMLElement;
   jar: CodeJar;
 
-  @Watch('code')
-  handleCodePropChange() {
-    if (this.editor?.textContent !== this.code) this.jar?.updateCode(this.code);
+  /** This is a hack. I can't get the cursor to behave so I just exposed this. */
+  @Method()
+  async forceCodeChange(code: string) {
+    this.jar?.updateCode((this.code = code));
+    // Pretty hacky, but this is the only way to position cursor at end.
+    this.jar?.restore({
+      start: this.code.length,
+      end: this.code.length,
+      dir: '->',
+    });
+    this.editor?.focus();
   }
 
   componentDidLoad() {
     this.jar = CodeJar(
       this.editor,
       (elem: HTMLElement) => {
-        elem.textContent = elem.textContent;
-        hljs.highlightElement(elem, {
+        elem.innerHTML = hljs.highlight(elem.textContent, {
           language: 'javascript',
-        });
+        }).value;
       },
       { tab: '  ' },
     );
