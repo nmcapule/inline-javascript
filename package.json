@@ -1,7 +1,7 @@
 {
-  "name": "inline",
+  "name": "inline-javascript-sandbox",
   "version": "0.0.1",
-  "description": "Inline JavaScript Playground",
+  "description": "Inline JavaScript Sandbox",
   "author": "Nathaniel M. Capule",
   "scripts": {
     "build": "stencil build",
