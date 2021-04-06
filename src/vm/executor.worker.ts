@@ -46,17 +46,16 @@ function registerDwitter() {
       me.R = (r, g, b, a) => `rgba(${r}, ${g}, ${b}, ${a})`;
       me.c = this.canvas;
       me.x = me.c.getContext('2d');
+      me.u = new Function(`(${fnstr})(...arguments)`);
 
       // Clear canvas.
       me.c.width = me.c.width;
-
-      const u = new Function(`(${fnstr})(...arguments)`);
 
       let start = performance.now();
       return new Promise(ok => {
         const step = _timestamp => {
           const elapsed = performance.now() - start;
-          u(elapsed / 1000);
+          me.u(elapsed / 1000);
           if (elapsed < limit) {
             window.requestAnimationFrame(step);
           } else {
