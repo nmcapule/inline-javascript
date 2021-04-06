@@ -1,8 +1,8 @@
-import { execute, setWorkerState, initWorker, cleanupWorker } from './executor.worker';
+import { execute, signal, init, cleanup, panic, resume } from './executor.worker';
 
 function runOnMainFactory(context: any) {
   return async (callId: number, fn: Function | string, args: any[] = []) =>
-    context.setState(
+    context.signal(
       callId,
       await Function(`return (
         ${fn.toString()}
@@ -11,22 +11,40 @@ function runOnMainFactory(context: any) {
 }
 
 export default class Executor {
+  running = false;
+
   constructor(readonly context: Object) {}
 
   destroy() {
-    cleanupWorker();
+    cleanup();
+  }
+
+  panic() {
+    panic();
+  }
+
+  resume() {
+    resume();
   }
 
   async execute(code: string) {
-    await initWorker();
-    const result = await execute(
-      code,
-      runOnMainFactory({
-        ...this.context,
-        setState: setWorkerState,
-      }),
-    );
-    await cleanupWorker();
+    this.running = true;
+
+    let result: any;
+    try {
+      await init();
+      result = await execute(
+        code,
+        runOnMainFactory({
+          ...this.context,
+          signal: signal,
+        }),
+      );
+    } finally {
+      await cleanup();
+    }
+
+    this.running = false;
 
     return result;
   }

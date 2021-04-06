@@ -15,6 +15,11 @@ export class InlineRenderLogs {
     return (
       <Host>
         <div class="logger monospace" ref={ref => (this.logger = ref)}>
+          {!this.logs.length && (
+            <marquee scrollamount="1">
+              <div class="log">🐢🎈</div>
+            </marquee>
+          )}
           {this.logs.map(log => (
             <div
               class={{
