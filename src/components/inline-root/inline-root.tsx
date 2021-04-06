@@ -69,6 +69,13 @@ await Promise.all(promises);`;
     }
   }
 
+  async componentDidLoad() {
+    const query = new URLSearchParams(window.location.search);
+    if (query.get('autorun')) {
+      this.execute(this.code);
+    }
+  }
+
   toggleFocus(elem?: string) {
     if (!this.focusElementName) return;
 
