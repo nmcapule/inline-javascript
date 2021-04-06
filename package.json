@@ -1,8 +1,8 @@
 {
   "name": "inline",
-  "private": true,
   "version": "0.0.1",
   "description": "Inline JavaScript Playground",
+  "author": "Nathaniel M. Capule",
   "scripts": {
     "build": "stencil build",
     "start": "stencil build --dev --watch --serve",
@@ -22,5 +22,16 @@
     "lz-string": "^1.4.4",
     "rxjs": "^6.6.7",
     "uuid": "^8.3.2"
-  }
+  },
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.js",
+  "es2015": "./dist/esm/index.mjs",
+  "es2017": "./dist/esm/index.mjs",
+  "types": "./dist/types/components.d.ts",
+  "unpkg": "./dist/ionic/ionic.js",
+  "collection:main": "./dist/collection/index.js",
+  "collection": "./dist/collection/collection-manifest.json",
+  "files": [
+    "dist/"
+  ]
 }
