@@ -12,6 +12,10 @@
   flex: 50%;
 }
 
+.hidden {
+  display: none;
+}
+
 .overlay {
   position: fixed;
   display: flex;
@@ -41,5 +45,26 @@
       background-color: #333;
       cursor: pointer;
     }
+  }
+}
+
+// Thank you https://ratiobuddy.com/
+.outer {
+  position: relative;
+
+  &:before {
+    display: block;
+    content: '';
+    width: 100%;
+    padding-top: (9 / 16) * 100%;
+  }
+
+  > .inner {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 }

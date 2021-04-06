@@ -36,12 +36,15 @@ for (let i = 0; i < 1000; i++) {
 await Promise.all(promises);`;
 
   @State() logs: any[] = [];
+  @State() focusElementName = '';
+  @State() showCanvas = false;
 
   private codeChanged = new Subject<string>();
   private editor: Partial<InlineEditor>;
 
   vm: Executor;
   logger: Logger;
+  canvas: HTMLCanvasElement;
 
   async componentWillLoad() {
     const query = new URLSearchParams(window.location.search);
@@ -62,20 +65,19 @@ await Promise.all(promises);`;
     });
 
     if (window.innerWidth <= 840) {
-      this.focus = 'inline-editor';
+      this.focusElementName = 'inline-editor';
     }
   }
 
-  @State() focus = '';
   toggleFocus(elem?: string) {
-    if (!this.focus) return;
+    if (!this.focusElementName) return;
 
     if (elem) {
-      this.focus = elem;
-    } else if (this.focus === 'inline-editor') {
-      this.focus = 'inline-render-logs';
-    } else if (this.focus === 'inline-render-logs') {
-      this.focus = 'inline-editor';
+      this.focusElementName = elem;
+    } else if (this.focusElementName === 'inline-editor') {
+      this.focusElementName = 'inline-render-logs';
+    } else if (this.focusElementName === 'inline-render-logs') {
+      this.focusElementName = 'inline-editor';
     }
   }
 
@@ -96,8 +98,8 @@ await Promise.all(promises);`;
       return event.preventDefault();
     }
     if (event.ctrlKey && event.key === '\\') {
-      if (!this.focus) {
-        this.focus = 'inline-editor';
+      if (!this.focusElementName) {
+        this.focusElementName = 'inline-editor';
       } else {
         this.toggleFocus();
       }
@@ -115,7 +117,13 @@ await Promise.all(promises);`;
     this.logger = new Logger(v => (this.logs = v));
     this.logger.info('📝 executing JS: ', new Date());
 
-    this.vm = new Executor({ console: this.logger });
+    this.showCanvas = false;
+
+    this.vm = new Executor({
+      console: this.logger,
+      canvas: this.canvas,
+      showCanvas: v => (this.showCanvas = v),
+    });
     try {
       const result = await this.vm.execute(code);
       this.logger.info('📦 return value: ', result);
@@ -150,7 +158,7 @@ await Promise.all(promises);`;
               🐇
             </button>
           )}
-          {this.focus && (
+          {this.focusElementName && (
             <button class="fav" onClick={() => this.toggleFocus()}>
               👩‍💻
             </button>
@@ -168,8 +176,25 @@ await Promise.all(promises);`;
             </svg>
           </a>
         </div>
-        {(!this.focus || this.focus === 'inline-editor') && <inline-editor class="block" code={this.code} ref={editor => (this.editor = editor)} />}
-        {(!this.focus || this.focus === 'inline-render-logs') && <inline-render-logs class="block" logs={this.logs} />}
+        <inline-editor
+          class={{
+            block: true,
+            hidden: this.focusElementName && this.focusElementName !== 'inline-editor',
+          }}
+          code={this.code}
+          ref={editor => (this.editor = editor)}
+        />
+        <inline-render-logs
+          class={{
+            block: true,
+            hidden: this.focusElementName && this.focusElementName !== 'inline-render-logs',
+          }}
+          logs={this.logs}
+        >
+          <div class={{ outer: true, hidden: !this.showCanvas }}>
+            <canvas class="canvas inner" width="1920" height="1080" ref={ref => (this.canvas = ref)} />
+          </div>
+        </inline-render-logs>
       </Host>
     );
   }
