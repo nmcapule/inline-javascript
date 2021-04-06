@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, Watch } from '@stencil/core';
+import { Component, Host, h, Prop } from '@stencil/core';
 
 @Component({
   tag: 'inline-render-logs',
@@ -10,11 +10,6 @@ export class InlineRenderLogs {
   @Prop() logs: { level: string; message: string }[] = [];
 
   logger: HTMLElement;
-
-  @Watch('logs')
-  onLogsChanged() {
-    setTimeout(() => this.logger?.lastElementChild?.scrollIntoView({}));
-  }
 
   render() {
     return (

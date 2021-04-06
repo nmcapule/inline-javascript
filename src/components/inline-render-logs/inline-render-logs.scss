@@ -1,6 +1,8 @@
 inline-render-logs {
   display: flex;
   overflow: auto;
+  /** https://stackoverflow.com/a/44051405 */
+  flex-direction: column-reverse;
 
   .monospace {
     text-align: left;
