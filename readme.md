@@ -14,6 +14,7 @@ Execute sandboxed JS in a page.
       for inspiration.
 - [ ] Custom inputs instead of just `window.prompt` or `window.confirm`.
 - [ ] Improve UI.
+- [ ] Improve documentation.
 - [x] Compatibility with dwitter! - Almost. [Check this out!](https://nmcapule.github.io/inline-javascript/?snippet=PTAEl4NxCndAFAnApgZyaAwgFzgGwNQFEA7DBOUDAe1AQA8EBjAVxNArMSUYFsFQl64ASwAOGAHQAoEBGjxkqTDlwBHclSSVhfASPFSwUWBwVY8AHTWh6ACwCGhAOa8AboIQB3SRNvvbgjKAAJu7+JHAAFOEYAJSgALwAfKAA3hKgoPqg1hgYwkgAXCDuxWLBoaRihAgYwIHAAIwAnPUA7AAMEgBmbOGCcW0A3ACacYIJCQCsADRDADwAzBMDNADaFAD8AOT02Ai2cABKDBib+ZudgtjYR-QnALrhbVMAhDRiSNUAKnD2SN1wXHCABZxhQpgBaMEAJgAVNDIVMAFYAUk+4KGyKhs1mADYZjDPrhPjCAMrhREwxG4RowmKkqLRGEwxrRKafOLzKFs6LRCijTFI0a4XCQiQSAC+0QGQA)
 - [x] Allow sharing code via URL only and no server-side.
 
